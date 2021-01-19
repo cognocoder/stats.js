@@ -1,0 +1,24 @@
+{
+  "name": "stats",
+  "version": "0.0.1",
+  "description": "Modular statistics for JavaScript.",
+  "main": "drivers/help.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cognocoder/stats.js.git"
+  },
+  "keywords": [
+    "Modular",
+    "Statistics",
+    "Stats"
+  ],
+  "author": "cognocoder (Breno Souza)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cognocoder/stats.js/issues"
+  },
+  "homepage": "https://github.com/cognocoder/stats.js#readme"
+}
