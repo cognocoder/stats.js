@@ -11,6 +11,14 @@ function update_sum(statistics, value) {
   statistics.sum += value;
 }
 
+function update_mode_map(statistics, value) {
+  let mode = statistics.central_tendency.mode;
+  if (mode.has(value))
+      mode.set(value, mode.get(value) + 1);
+  else
+    mode.set(value, 1);
+}
+
 export default class statistics {
 
   constructor(array) {
@@ -25,7 +33,7 @@ export default class statistics {
     this.central_tendency.mode = new Map();
 
     let pass = [];
-    pass.push(check_min, check_max, update_sum);
+    pass.push(check_min, check_max, update_sum, update_mode_map);
 
     for (let value of array)
       for (let fn of pass)
