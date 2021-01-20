@@ -27,6 +27,14 @@ export default class statistics {
     for (let value of array)
       for (let fn of pass)
         fn(this, value);
+
+    this.central_tendency = {
+      mean: {
+        arithmetic: this.sum / array.length,
+        geometric: undefined,
+        harmonic: undefined
+      }   
+    }
   }
 
 }
