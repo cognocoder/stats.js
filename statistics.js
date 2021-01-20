@@ -19,6 +19,24 @@ function update_mode_map(statistics, value) {
     mode.set(value, 1);
 }
 
+function compute_mode(statistics, final_sort = true) {
+  // Sort map by mode values descending.
+  let mode = new Map([...statistics.central_tendency.mode.entries()]
+    .sort(function mode_comparison(a,b) { return b[1] - a[1]; }));
+
+  let mode_value = mode.values().next().value;
+
+  // Remove keys with values that are less than the mode.
+  for (let [key,value] of mode)
+    if (value < mode_value) mode.delete(key);
+
+  // Sort mode keys ascending.
+  if (final_sort)
+    mode = new Map([...mode].sort((a,b) => a[0] - b[0]));
+
+  statistics.central_tendency.mode = mode;
+}
+
 export default class statistics {
 
   constructor(array) {
@@ -44,6 +62,8 @@ export default class statistics {
         geometric: undefined,
         harmonic: undefined
     };
+
+    compute_mode(this);
   }
 
 }
