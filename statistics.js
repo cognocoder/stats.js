@@ -1,14 +1,14 @@
 
-function check_min(stats, value) {
-  if (value < stats.min) stats.min = value; 
+function check_min(statistics, value) {
+  if (value < statistics.min) statistics.min = value; 
 }
 
-function check_max(stats, value) {
-  if (value > stats.max) stats.max = value; 
+function check_max(statistics, value) {
+  if (value > statistics.max) statistics.max = value; 
 }
 
-function update_sum(stats, value) {
-  stats.sum += value;
+function update_sum(statistics, value) {
+  statistics.sum += value;
 }
 
 export default class statistics {
@@ -21,6 +21,9 @@ export default class statistics {
 
     this.sum = 0;
     
+    this.central_tendency = {};
+    this.central_tendency.mode = new Map();
+
     let pass = [];
     pass.push(check_min, check_max, update_sum);
 
@@ -28,13 +31,11 @@ export default class statistics {
       for (let fn of pass)
         fn(this, value);
 
-    this.central_tendency = {
-      mean: {
+    this.central_tendency.mean = {
         arithmetic: this.sum / array.length,
         geometric: undefined,
         harmonic: undefined
-      }   
-    }
+    };
   }
 
 }
