@@ -4,8 +4,10 @@
   "description": "Modular statistics for JavaScript.",
   "main": "drivers/help.js",
   "scripts": {
+    "start": "node statistics.js",
     "test": "test"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cognocoder/stats.js.git"
