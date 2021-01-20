@@ -45,6 +45,8 @@ export default class statistics {
     this.min = array[0];
     this.max = array[0];
 
+    this.range = 0;
+
     this.sum = 0;
     
     this.central_tendency = {};
@@ -56,6 +58,8 @@ export default class statistics {
     for (let value of array)
       for (let fn of pass)
         fn(this, value);
+
+    this.range = this.max - this.min;
 
     this.central_tendency.mean = {
         arithmetic: this.sum / array.length,
