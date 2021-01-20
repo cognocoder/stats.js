@@ -7,6 +7,10 @@ function check_max(stats, value) {
   if (value > stats.max) stats.max = value; 
 }
 
+function update_sum(stats, value) {
+  stats.sum += value;
+}
+
 export default class statistics {
 
   constructor(array) {
@@ -14,9 +18,11 @@ export default class statistics {
 
     this.min = array[0];
     this.max = array[0];
+
+    this.sum = 0;
     
     let pass = [];
-    pass.push(check_min, check_max);
+    pass.push(check_min, check_max, update_sum);
 
     for (let value of array)
       for (let fn of pass)
