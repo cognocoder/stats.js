@@ -47,7 +47,8 @@ class lookup_hooks {
 
 let default_lookup_hooks_array = [
   new lookup_hooks([], 
-    [ check_min, check_max, update_sum, update_mode_map ], [])
+    [ check_min, check_max, update_sum, update_mode_map ],
+    [ compute_mode, compute_range, compute_arithmetic_mean ])
 ];
 
 function run_lookup_hooks(statistics, lookup_hooks) {
@@ -65,6 +66,14 @@ function run_lookup_hooks(statistics, lookup_hooks) {
     fn(statistics);
 }
 
+function compute_range(statistics) {
+  statistics.range = statistics.max - statistics.min;
+}
+
+function compute_arithmetic_mean(statistics) {
+  statistics.mean["arithmetic"] = statistics.sum / statistics.data.length;
+}
+
 export default class statistics {
 
   constructor(array, lookup_hooks_array = []) {
@@ -78,22 +87,13 @@ export default class statistics {
     this.sum = 0;
     
     this.mode = new Map();
+    this.mean = {};
 
     for (let hooks of default_lookup_hooks_array)
       run_lookup_hooks(this, hooks);
 
     for (let hooks of lookup_hooks_array)
       run_lookup_hooks(this, hooks)
-
-    this.range = this.max - this.min;
-
-    this.mean = {
-        arithmetic: this.sum / array.length,
-        geometric: undefined,
-        harmonic: undefined
-    };
-
-    compute_mode(this);
   }
 
 }
