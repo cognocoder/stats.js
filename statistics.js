@@ -48,7 +48,7 @@ class lookup_hooks {
 let default_lookup_hooks_array = [
   new lookup_hooks([], 
     [ check_min, check_max, update_sum, update_mode_map ],
-    [ compute_mode, compute_range, compute_arithmetic_mean ])
+    [ compute_mode, compute_range, compute_arithmetic_mean, compute_median ])
 ];
 
 function run_lookup_hooks(statistics, lookup_hooks) {
@@ -74,20 +74,31 @@ function compute_arithmetic_mean(statistics) {
   statistics.mean["arithmetic"] = statistics.sum / statistics.data.length;
 }
 
+function compute_median(statistics) {
+  let length = statistics.data.length;
+  let odd = length % 2 == 1;
+
+  let data = [...statistics.data].sort();
+
+  if (odd) {
+    statistics.median = data[length/2];
+  }
+  else {
+    statistics.median = (data[length/2-1] + data[length/2])/2;
+  }
+}
+
 export default class statistics {
 
   constructor(array, lookup_hooks_array = []) {
     this.data = array;
-
     this.min = array[0];
     this.max = array[0];
-
     this.range = 0;
-
     this.sum = 0;
-    
     this.mode = new Map();
     this.mean = {};
+    this.median = 0;
 
     for (let hooks of default_lookup_hooks_array)
       run_lookup_hooks(this, hooks);
