@@ -12,7 +12,7 @@ function update_sum(statistics, value) {
 }
 
 function update_mode_map(statistics, value) {
-  let mode = statistics.central_tendency.mode;
+  let mode = statistics.mode;
   if (mode.has(value))
       mode.set(value, mode.get(value) + 1);
   else
@@ -21,7 +21,7 @@ function update_mode_map(statistics, value) {
 
 function compute_mode(statistics, final_sort = true) {
   // Sort map by mode values descending.
-  let mode = new Map([...statistics.central_tendency.mode.entries()]
+  let mode = new Map([...statistics.mode.entries()]
     .sort(function mode_comparison(a,b) { return b[1] - a[1]; }));
 
   let mode_value = mode.values().next().value;
@@ -34,7 +34,7 @@ function compute_mode(statistics, final_sort = true) {
   if (final_sort)
     mode = new Map([...mode].sort((a,b) => a[0] - b[0]));
 
-  statistics.central_tendency.mode = mode;
+  statistics.mode = mode;
 }
 
 export default class statistics {
@@ -49,8 +49,7 @@ export default class statistics {
 
     this.sum = 0;
     
-    this.central_tendency = {};
-    this.central_tendency.mode = new Map();
+    this.mode = new Map();
 
     let pass = [];
     pass.push(check_min, check_max, update_sum, update_mode_map);
@@ -61,7 +60,7 @@ export default class statistics {
 
     this.range = this.max - this.min;
 
-    this.central_tendency.mean = {
+    this.mean = {
         arithmetic: this.sum / array.length,
         geometric: undefined,
         harmonic: undefined
