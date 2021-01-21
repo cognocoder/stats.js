@@ -37,9 +37,37 @@ function compute_mode(statistics, final_sort = true) {
   statistics.mode = mode;
 }
 
+class lookup_hooks {
+  constructor(pre, on, pos) {
+    this.pre = Array.isArray(pre) ? pre : [];
+    this.on = Array.isArray(on) ? on : [];
+    this.pos = Array.isArray(pos) ? pos : [];
+  }
+}
+
+let default_lookup_hooks_array = [
+  new lookup_hooks([], 
+    [ check_min, check_max, update_sum, update_mode_map ], [])
+];
+
+function run_lookup_hooks(statistics, lookup_hooks) {
+  // Call pre hooks.
+  for (let fn of lookup_hooks.pre)
+    fn(statistics);
+
+  // Call on value hooks, e.g., hooks called on array lookup.
+  for (let value of statistics.data)
+    for (let fn of lookup_hooks.on)
+      fn(statistics, value);
+
+  // Call pos hooks.
+  for (let fn of lookup_hooks.pos)
+    fn(statistics);
+}
+
 export default class statistics {
 
-  constructor(array) {
+  constructor(array, lookup_hooks_array = []) {
     this.data = array;
 
     this.min = array[0];
@@ -51,12 +79,11 @@ export default class statistics {
     
     this.mode = new Map();
 
-    let pass = [];
-    pass.push(check_min, check_max, update_sum, update_mode_map);
+    for (let hooks of default_lookup_hooks_array)
+      run_lookup_hooks(this, hooks);
 
-    for (let value of array)
-      for (let fn of pass)
-        fn(this, value);
+    for (let hooks of lookup_hooks_array)
+      run_lookup_hooks(this, hooks)
 
     this.range = this.max - this.min;
 
