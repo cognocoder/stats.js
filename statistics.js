@@ -1,9 +1,17 @@
 
-function check_min(statistics, value) {
+class lookup_hooks {
+  constructor(pre, on, pos) {
+    this.pre = Array.isArray(pre) ? pre : [];
+    this.on = Array.isArray(on) ? on : [];
+    this.pos = Array.isArray(pos) ? pos : [];
+  }
+}
+
+function update_min(statistics, value) {
   if (value < statistics.min) statistics.min = value; 
 }
 
-function check_max(statistics, value) {
+function update_max(statistics, value) {
   if (value > statistics.max) statistics.max = value; 
 }
 
@@ -37,20 +45,6 @@ function compute_mode(statistics, final_sort = true) {
   statistics.mode = mode;
 }
 
-class lookup_hooks {
-  constructor(pre, on, pos) {
-    this.pre = Array.isArray(pre) ? pre : [];
-    this.on = Array.isArray(on) ? on : [];
-    this.pos = Array.isArray(pos) ? pos : [];
-  }
-}
-
-let default_lookup_hooks_array = [
-  new lookup_hooks([], 
-    [ check_min, check_max, update_sum, update_mode_map ],
-    [ compute_mode, compute_range, compute_arithmetic_mean, compute_median ])
-];
-
 function run_lookup_hooks(statistics, lookup_hooks) {
   // Call pre hooks.
   for (let fn of lookup_hooks.pre)
@@ -71,7 +65,7 @@ function compute_range(statistics) {
 }
 
 function compute_arithmetic_mean(statistics) {
-  statistics.mean["arithmetic"] = statistics.sum / statistics.data.length;
+  statistics.mean['arithmetic'] = statistics.sum / statistics.data.length;
 }
 
 function compute_median(statistics) {
@@ -88,8 +82,26 @@ function compute_median(statistics) {
   }
 }
 
-export default class statistics {
+function update_variance(statistics, value) {
+  statistics.variance += Math.pow(value - statistics.mean['arithmetic'], 2);
+}
 
+function compute_variance(statistics) {
+  statistics.variance /= statistics.data.length;
+}
+
+function compute_standart_deviation(statistics) {
+  statistics.standart_deviation = Math.sqrt(statistics.variance);
+}
+
+let default_lookup_hooks_array = [
+  new lookup_hooks([], [ update_min, update_max, update_sum, update_mode_map ],
+    [ compute_mode, compute_range, compute_arithmetic_mean, compute_median ]),
+  new lookup_hooks([], [ update_variance ],
+    [ compute_variance, compute_standart_deviation ])
+];
+
+export default class statistics {
   constructor(array, lookup_hooks_array = []) {
     this.data = array;
     this.min = array[0];
@@ -99,6 +111,8 @@ export default class statistics {
     this.mode = new Map();
     this.mean = {};
     this.median = 0;
+    this.variance = 0;
+    this.standart_deviation = 0;
 
     for (let hooks of default_lookup_hooks_array)
       run_lookup_hooks(this, hooks);
